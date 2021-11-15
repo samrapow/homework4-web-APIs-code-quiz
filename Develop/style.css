@@ -1,0 +1,21 @@
+.view-highscores {
+    float: left;
+}
+
+.time-counter {
+    float: right;
+}
+
+main {
+    text-align: center;;
+}
+
+.question {
+    font-size: 30px;
+    font-weight: bold;
+}
+
+/* Need to put conditional style into this */
+/* .feedback {
+    border-top: 1px solid black;
+} */
