@@ -40,6 +40,11 @@ main {
     background-color: purple;
     color: whitesmoke;
     border: 2px solid purple;
+    width: 400px;
+    text-align: center;
+    margin: auto;
+    display: flex;
+    justify-content: center;;
 }
 
 .button:hover {

@@ -69,7 +69,9 @@ var answerButton = document.querySelectorAll(".answer-button");
 var feedback = document.querySelector("#feedback");
 var conclusion = document.querySelector("#conclusion");
 var timeLeft = document.querySelector("#time-counter");
-var finalScore = document.querySelector("#record-score");
+var finalScore = document.querySelector("#score");
+var submitScore = document.querySelector("#submit");
+var showHighscores = document.querySelector("#highscores");
 
 var secondsLeft = 60;
 var endGame;
@@ -85,7 +87,7 @@ function setTime() {
     if (missedQuestion === false) {
       secondsLeft-= 10;
       missedQuestion = true;
-    }
+    } 
 
     if(secondsLeft === 0 || endGame === true) {
       // Stops execution of action at set interval
@@ -100,12 +102,16 @@ function setTime() {
 
 //function to get the quiz going
 
+submitScore.addEventListener('click', showHighscores);
+
 startButton.addEventListener('click', startQuiz);
+
 answers.addEventListener('click', function (event) {
   var event = event.target;
   evaluateAnswer(event.textContent.trim());
   setNextQuestion();
 });
+
 
 function startQuiz() {
   setTime();
@@ -116,6 +122,11 @@ function startQuiz() {
   questionAnswer.classList.remove('hide');
   setNextQuestion();
   endGame = false;
+}
+
+function showHighscores() {
+  conclusion.classList.add("hide");
+  showHighscores.classList.remove("hide");
 }
 
 function setNextQuestion () {
