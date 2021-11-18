@@ -66,7 +66,37 @@ var questionAnswer = document.querySelector("#question-answer");
 var questionText = document.querySelector("#question");
 var answers = document.querySelector("#answers");
 var answerButton = document.querySelectorAll(".answer-button");
-// var nextButton = document.querySelector("#next-button");
+var feedback = document.querySelector("#feedback");
+var conclusion = document.querySelector("#conclusion");
+var timeLeft = document.querySelector("#time-counter");
+var finalScore = document.querySelector("#record-score");
+
+var secondsLeft = 60;
+var endGame;
+var missedQuestion;
+
+
+function setTime() {
+  // Sets interval in variable
+  var timerInterval = setInterval(function() {
+    secondsLeft--;
+    timeLeft.textContent = "Time: " + secondsLeft;
+
+    if (missedQuestion === false) {
+      secondsLeft-= 10;
+      missedQuestion = true;
+    }
+
+    if(secondsLeft === 0 || endGame === true) {
+      // Stops execution of action at set interval
+      clearInterval(timerInterval);
+      gameOver();
+      // Calls function to create and append image
+    }
+
+  }, 1000);
+}
+
 
 //function to get the quiz going
 
@@ -74,15 +104,18 @@ startButton.addEventListener('click', startQuiz);
 answers.addEventListener('click', function (event) {
   var event = event.target;
   evaluateAnswer(event.textContent.trim());
+  setNextQuestion();
 });
 
 function startQuiz() {
+  setTime();
   console.log('Started');
   intro.classList.add('hide');
   // shuffledQuestions = questions.sort(() => Math.random() - .5);
   currentQuestionIndex = 0;
   questionAnswer.classList.remove('hide');
   setNextQuestion();
+  endGame = false;
 }
 
 function setNextQuestion () {
@@ -105,12 +138,35 @@ function showQuestion(question) {
 
 function evaluateAnswer (event) {
   // if the string that you click on is equal to 
-  if (event === questions[currentQuestionIndex].correct) {
-    console.log("You got it right!")
+  if (currentQuestionIndex === (questions.length - 1) && event === questions[currentQuestionIndex].correct) {
+    endGame = true;
+    gameOver();
+  } else if (currentQuestionIndex === (questions.length - 1) && event !== questions[currentQuestionIndex].correct) {
+    missedQuestion = false;
+    endGame = true;
+    gameOver();
+  }
+  else if (event === questions[currentQuestionIndex].correct) {
+    console.log("You got it right!");
+    console.log(currentQuestionIndex);
+    feedback.innerHTML = "Correct!";
+    currentQuestionIndex++;
   } else {
-    console.log("you got it wrong!")
+    console.log("you got it wrong!");
+    console.log(currentQuestionIndex);
+    feedback.innerHTML = "Wrroonnnggg!";
+    missedQuestion = false;
+    currentQuestionIndex++;
   }
 }
+
+function gameOver() {
+  questionAnswer.classList.add('hide');
+  conclusion.classList.remove('hide');
+  timeLeft.textContent = "Time: " + secondsLeft
+  finalScore.textContent = "Final score: " + secondsLeft;
+}
+
 
 function clearQuestions() {
   // nextButton.classList.add('hide');
@@ -118,29 +174,6 @@ function clearQuestions() {
     answers.removeChild(answers.firstChild)
   }
 }
-
-// function selectAnswer(i) {
-//   var selectedButton = i.target;
-//   var correct = selectedButton.dataset.correct;
-//   setStatusClass(document.body, correct);
-//   Array.from(answers.children).forEach(button => {
-//     setStatusClass(button, button.dataset.correct);
-//   })
-// }
-
-// function setStatusClass(element, correct) {
-//   clearStatusClass(element)
-//   if (correct) {
-//     element.classList.add('correct');
-//   } else {
-//     element.classList.add('wrong');
-//   }
-// }
-
-// function clearStatusClass(element) {
-//   element.classList.remove('correct');
-//   element.classList.remove('wrong');
-// }
 
 //function to pull each question
     //current question from questions
