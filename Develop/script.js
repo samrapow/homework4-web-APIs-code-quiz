@@ -8,8 +8,9 @@ var endGame;
 var missedQuestion;
 var saveScore;
 var saveInitials;
-var highscoreList;
+var highscoreList = {};
 var stopGame = false;
+var memScores;
 var questions = [
   {
     question:"Commonly used data types DO NOT include:" ,
@@ -160,6 +161,7 @@ function restart () {
 // When someone clicks 'Clear Highscores'
 function clearMemory () {
   localStorage.clear();
+  highscoreList = [];
   listHighScores.textContent = "";
 }
 
@@ -188,15 +190,39 @@ window.onload = function() {
 
 // Once someone submits their initials
 function showHighscores() {
-  highscoreList = {
-    "Score": saveScore,
-    "Initials": saveInitials
-  };
-  saveScores();
+  createHighScoreList();
   conclusion.classList.add("hide");
   highscoresPage.classList.remove("hide");
-  var memScores = JSON.parse(localStorage.getItem("score"));
-  listHighScores.textContent = memScores.Initials + "  -  " + memScores.Score;
+  memScores = JSON.parse(localStorage.getItem("score"));
+  displayHighScores(memScores);
+}
+
+// Display scores from memory
+function displayHighScores (score) {
+  listHighScores.textContent = "";
+  for (i=0; i < score.length; i++ ) {
+    listScore = document.createElement('h2');
+    listScore.innerText = score[i].Initials + " : " + score[i].Score;
+    listHighScores.appendChild(listScore);
+  };
+}
+
+// Check if there are existing high scores
+function createHighScoreList() {
+  if (Object.keys(highscoreList).length === 0) {
+    console.log("Empty");
+    highscoreList = [
+      {     
+        "Score": saveScore,
+        "Initials": saveInitials
+      }
+    ];
+    localStorage.setItem("score", JSON.stringify(highscoreList));
+  } else {
+    console.log("Not Empty");
+    highscoreList.push({"Score" : saveScore, "Initials" : saveInitials});
+    localStorage.setItem("score", JSON.stringify(highscoreList));
+  }
 }
 
 // To put the score into local memory
@@ -257,7 +283,6 @@ function gameOver() {
 
 // Remove existing questions
 function clearQuestions() {
-  // nextButton.classList.add('hide');
   while (answers.firstChild) {
     answers.removeChild(answers.firstChild)
   }
