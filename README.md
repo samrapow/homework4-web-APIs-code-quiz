@@ -8,8 +8,6 @@ I created a code quiz.  Upon clicking 'Start Quiz', a user will be directed to a
 
 ![Code Quiz Screenshot](Assets/Code_Quiz_Screenshot.jpeg "Code Quiz Screenshot")
 
-[Screenshot](Assets/Code_Quiz_Screenshot.jpeg)
-
 ## Deployed Application
 
 [Deployed Application](https://samrapow.github.io/homework4-web-APIs-code-quiz/Develop/index.html)
