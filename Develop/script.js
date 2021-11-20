@@ -76,6 +76,8 @@ var listHighScores = document.querySelector("#highscores-list");
 var initials = document.querySelector("#initials");
 var printInitials = document.querySelector("#print-initials");
 var goBack = document.querySelector("#go-back");
+var clearScores = document.querySelector("#clear-highscores");
+var jumpToHighScores = document.querySelector("#view-highscores");
 
 var secondsLeft = 60;
 var endGame;
@@ -118,12 +120,31 @@ answers.addEventListener('click', function (event) {
 
 goBack.addEventListener('click', restart);
 
+clearScores.addEventListener('click', clearMemory)
+
+jumpToHighScores.addEventListener('click', highScoreLink);
+
+
+function highScoreLink () {
+  conclusion.classList.add("hide");
+  intro.classList.add("hide");
+  questionAnswer.classList.add("hide");
+  highscoresPage.classList.remove("hide");
+}
+
+
+
 function restart () {
   highscoresPage.classList.add("hide");
   intro.classList.remove("hide");
   timeLeft.textContent = "Time: 60";
   secondsLeft = 60;
   feedback.textContent = "";
+}
+
+function clearMemory () {
+  localStorage.clear();
+  listHighScores.textContent = "";
 }
 
 
@@ -162,6 +183,8 @@ function showHighscores() {
   };
   saveScores();
   conclusion.classList.add("hide");
+  // intro.classList.add("hide");
+  // questionAnswer.classList.add("hide");
   highscoresPage.classList.remove("hide");
   var memScores = JSON.parse(localStorage.getItem("score"));
   listHighScores.textContent = memScores.Initials + "  -  " + memScores.Score;
