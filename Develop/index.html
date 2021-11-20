@@ -60,9 +60,10 @@
             <div id="conclusion" class="hide">
                 <h1 id="conclusion-title">All Done!</h1>
                 <p id="score"></p>
-                <form id="record-score" onSubmit="return false;">
-                    <label id="initials" type="input">Initials:</label>
-                    <input id="text" id="initials">
+                <form id="record-score">
+                    <label id="initials-label" type="input">Initials:</label>
+                    <input type = "text" id="initials"/>
+                    <p id = "print-initials"></p>
                     <button id="submit" class="button" type="button">Submit!</button>
                 </form>
             </div>
@@ -71,8 +72,10 @@
                 <h1 id="highscores-title"> Highscores! </h1>
                 <div id="highscores-list">
                 </div>
+                <br>
                 <div id="highscore-options">
                     <button id="go-back" class="button">Go Back</button>
+                    <br>
                     <button id="clear-highscores" class="button">Clear Highscores</button>
                 </div>
             </div>

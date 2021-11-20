@@ -71,7 +71,11 @@ var conclusion = document.querySelector("#conclusion");
 var timeLeft = document.querySelector("#time-counter");
 var finalScore = document.querySelector("#score");
 var submitScore = document.querySelector("#submit");
-var showHighscores = document.querySelector("#highscores");
+var highscoresPage = document.querySelector("#highscores");
+var listHighScores = document.querySelector("#highscores-list");
+var initials = document.querySelector("#initials");
+var printInitials = document.querySelector("#print-initials");
+var goBack = document.querySelector("#go-back");
 
 var secondsLeft = 60;
 var endGame;
@@ -112,6 +116,18 @@ answers.addEventListener('click', function (event) {
   setNextQuestion();
 });
 
+goBack.addEventListener('click', restart);
+
+function restart () {
+  highscoresPage.classList.add("hide");
+  intro.classList.remove("hide");
+  timeLeft.textContent = "Time: 60";
+  secondsLeft = 60;
+  feedback.textContent = "";
+}
+
+
+
 
 function startQuiz() {
   setTime();
@@ -124,9 +140,35 @@ function startQuiz() {
   endGame = false;
 }
 
+var saveScore;
+var saveInitials;
+
+var highscoreList;
+
+// var highScores = JSON.parse(localStorage.getItem)
+
+// log when there's input in the initials box and grab initials
+window.onload = function() {
+  initials.addEventListener("input", function () {
+    console.log(initials.value);
+    saveInitials = initials.value;
+  }); 
+}
+
 function showHighscores() {
+  highscoreList = {
+    "Score": saveScore,
+    "Initials": saveInitials
+  };
+  saveScores();
   conclusion.classList.add("hide");
-  showHighscores.classList.remove("hide");
+  highscoresPage.classList.remove("hide");
+  var memScores = JSON.parse(localStorage.getItem("score"));
+  listHighScores.textContent = memScores.Initials + "  -  " + memScores.Score;
+}
+
+function saveScores () {
+  localStorage.setItem("score", JSON.stringify(highscoreList));
 }
 
 function setNextQuestion () {
@@ -176,6 +218,7 @@ function gameOver() {
   conclusion.classList.remove('hide');
   timeLeft.textContent = "Time: " + secondsLeft
   finalScore.textContent = "Final score: " + secondsLeft;
+  saveScore = secondsLeft;
 }
 
 
@@ -185,6 +228,8 @@ function clearQuestions() {
     answers.removeChild(answers.firstChild)
   }
 }
+
+
 
 //function to pull each question
     //current question from questions
