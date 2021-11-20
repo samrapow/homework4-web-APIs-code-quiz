@@ -3,6 +3,13 @@ var activeQuiz = false;
 var shuffledQuestions;
 var currentQuestionIndex;
 var button;
+var secondsLeft = 60;
+var endGame;
+var missedQuestion;
+var saveScore;
+var saveInitials;
+var highscoreList;
+var stopGame = false;
 var questions = [
   {
     question:"Commonly used data types DO NOT include:" ,
@@ -55,9 +62,6 @@ var questions = [
     correct: "console.log"
   }
 ]
-// var questions1 = ["Commonly used data types DO NOT include:", "The condition in an if / else statement is enclosed within ____.", "Arrays in JavaScript can be used to store ____.", "String values must be enclosed within ____ when being assigned to variables.", "A very useful tool used during development and debugging for printing content to the debugger is:"];
-// var answerChoices = ["strings", "booleans", "alerts", "numbers", "quotes", "curly brackets", "parentheses", "square brackets", "numbers and strings", "other arrays", "booleans", "all of the above", "commas", "curly brackets", "quotes", "parentheses", "Javascript", "terminal / bash", "for loops", "console.log"];
-// var correctAnswers = ["alerts", "parentheses", "all of the above", "quotes", "console.log"];
 
 // variables to reference DOM elements
 var startButton = document.querySelector("#start-button");
@@ -79,34 +83,43 @@ var goBack = document.querySelector("#go-back");
 var clearScores = document.querySelector("#clear-highscores");
 var jumpToHighScores = document.querySelector("#view-highscores");
 
-var secondsLeft = 60;
-var endGame;
-var missedQuestion;
 
 
+// Timer
 function setTime() {
   // Sets interval in variable
   var timerInterval = setInterval(function() {
     secondsLeft--;
     timeLeft.textContent = "Time: " + secondsLeft;
 
+    // Take off 10 seconds if a question is missed
     if (missedQuestion === false) {
       secondsLeft-= 10;
       missedQuestion = true;
     } 
 
-    if(secondsLeft === 0 || endGame === true) {
+    // If the questions end or there are 0 seconds left, stop the timer and go to the conclusion page
+    if (secondsLeft === 0 || endGame === true) {
       // Stops execution of action at set interval
       clearInterval(timerInterval);
       gameOver();
       // Calls function to create and append image
     }
 
+    // Stop execution if 'view highscores' is clicked
+    if (stopGame) {
+      stopGame = false;
+      clearInterval(timerInterval);
+      secondsLeft = 60;
+      timeLeft.textContent = "Time: " + secondsLeft;
+      feedback.textContent = "";
+    }
+
   }, 1000);
 }
 
 
-//function to get the quiz going
+//Event listeners for all buttons
 
 submitScore.addEventListener('click', showHighscores);
 
@@ -125,15 +138,17 @@ clearScores.addEventListener('click', clearMemory)
 jumpToHighScores.addEventListener('click', highScoreLink);
 
 
+// When someone clicks on 'view highscores'
 function highScoreLink () {
+  stopGame = true;
   conclusion.classList.add("hide");
   intro.classList.add("hide");
   questionAnswer.classList.add("hide");
   highscoresPage.classList.remove("hide");
+
 }
 
-
-
+// When someone clicks 'Go Back'
 function restart () {
   highscoresPage.classList.add("hide");
   intro.classList.remove("hide");
@@ -142,6 +157,7 @@ function restart () {
   feedback.textContent = "";
 }
 
+// When someone clicks 'Clear Highscores'
 function clearMemory () {
   localStorage.clear();
   listHighScores.textContent = "";
@@ -149,24 +165,18 @@ function clearMemory () {
 
 
 
-
+// To start the quiz
 function startQuiz() {
+  stopGame = false;
   setTime();
   console.log('Started');
   intro.classList.add('hide');
-  // shuffledQuestions = questions.sort(() => Math.random() - .5);
+  shuffledQuestions = questions.sort(() => Math.random() - .5);
   currentQuestionIndex = 0;
   questionAnswer.classList.remove('hide');
   setNextQuestion();
   endGame = false;
 }
-
-var saveScore;
-var saveInitials;
-
-var highscoreList;
-
-// var highScores = JSON.parse(localStorage.getItem)
 
 // log when there's input in the initials box and grab initials
 window.onload = function() {
@@ -176,6 +186,7 @@ window.onload = function() {
   }); 
 }
 
+// Once someone submits their initials
 function showHighscores() {
   highscoreList = {
     "Score": saveScore,
@@ -183,22 +194,23 @@ function showHighscores() {
   };
   saveScores();
   conclusion.classList.add("hide");
-  // intro.classList.add("hide");
-  // questionAnswer.classList.add("hide");
   highscoresPage.classList.remove("hide");
   var memScores = JSON.parse(localStorage.getItem("score"));
   listHighScores.textContent = memScores.Initials + "  -  " + memScores.Score;
 }
 
+// To put the score into local memory
 function saveScores () {
   localStorage.setItem("score", JSON.stringify(highscoreList));
 }
 
+// To move from one question to the next
 function setNextQuestion () {
   clearQuestions();
   showQuestion(questions[currentQuestionIndex]);
 }
 
+// To get the question buttons created and populated
 function showQuestion(question) {
   questionText.innerText = question.question;
   question.answers.forEach(answer => {
@@ -206,12 +218,10 @@ function showQuestion(question) {
     button.innerText = answer.text;
     button.classList.add('button', 'answer-button');
     answers.appendChild(button);
-    // button.addEventListener('click', selectAnswer);
   })
-  // currentQuestionIndex++;
-  // setNextQuestion();
 }
 
+// Determine if answer is correct or incorrect
 function evaluateAnswer (event) {
   // if the string that you click on is equal to 
   if (currentQuestionIndex === (questions.length - 1) && event === questions[currentQuestionIndex].correct) {
@@ -236,6 +246,7 @@ function evaluateAnswer (event) {
   }
 }
 
+// Once the game ends
 function gameOver() {
   questionAnswer.classList.add('hide');
   conclusion.classList.remove('hide');
@@ -244,54 +255,10 @@ function gameOver() {
   saveScore = secondsLeft;
 }
 
-
+// Remove existing questions
 function clearQuestions() {
   // nextButton.classList.add('hide');
   while (answers.firstChild) {
     answers.removeChild(answers.firstChild)
   }
 }
-
-
-
-//function to pull each question
-    //current question from questions
-    //updated DOM elements to reflect the new question
-    //clear old question choices
-    //loop over answer choices (TIP: ForEach ;) ) 
-    //create new button for each choice
-    //event listener for each choice
-    //display on the page
-
-//function for the questionclick 
-  //did the user guess right or wrong
-  //wrong guess decreases time
-  //display new time on the page
-  //move to the next question
-  //check if there are any questions left/you've run out
-
-//function to end the quiz
-  //stops timer
-  //shows end screen
-  //shows final score
-  //hides questions section
-
- //function for the clock 
-  //updates time
-  //checks if user ran out of time 
-
-//function to save the high score
-  //get value of input box
-  //make sure value isnt empty
-  //get saved scores from localstorage, or if not any, set to empty array
-  //format new score object for current user 
-  //save to localstorage
-  //redirect to next page
-
-
-
-
-// user clicks button to submit initials
-
-
-// user clicks button to start quiz
